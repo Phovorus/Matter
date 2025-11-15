@@ -1,14 +1,9 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added for proper mobile scaling -->
 <meta name="theme-color" content="#87CEEB">
 <title>MatterSphere</title>
-
-<!-- CHANGED HERE: Added preload hints for initial images -->
-<link rel="preload" href="images/Sol.jpg" as="image">
-<link rel="preload" href="images/Freezing.png" as="image">
-
 <style>
 :root {
   --bg: linear-gradient(135deg, #87CEEB, #228B22);
@@ -473,8 +468,7 @@ input[type="range"]::-webkit-slider-thumb {
 
       <div class="sim2">
         <div class="title-area" id="title-area"></div>
-        <!-- CHANGED HERE: Added loading="lazy" -->
-        <img id="slider" src="images/Sol.jpg" alt="Slider Image" loading="lazy" />
+        <img id="slider" src="images/Sol.jpg" alt="Slider Image" />
         <div class="text-area" id="text-area"></div>
         <div class="buttons-row">
           <button class="nice1" id="prev-btn-2"> &larr; Prev </button>
@@ -484,8 +478,7 @@ input[type="range"]::-webkit-slider-thumb {
 
       <div class="sim3">
         <div class="title-area1" id="title-area1"></div>
-        <!-- CHANGED HERE: Added loading="lazy" -->
-        <img id="slider1" src="images/Freezing.png" alt="Slider Image" loading="lazy" />
+        <img id="slider1" src="images/Freezing.png" alt="Slider Image" />
         <div class="text-area1" id="text-area1"></div>
         <div class="buttons-row1">
           <button class="nice11" id="prev-btn-3"> &larr; Prev </button>
@@ -499,8 +492,7 @@ input[type="range"]::-webkit-slider-thumb {
     <div id="tutorial-inner">
       <button id="close-modal">X</button>
       <div id="tutorial-content">
-        <!-- CHANGED HERE: Added loading="lazy" -->
-        <img id="tutorial-img" src="" alt="Tutorial Step" loading="lazy">
+        <img id="tutorial-img" src="" alt="Tutorial Step">
         <p id="tutorial-desc"></p>
       </div>
       <div id="tutorial-nav">
@@ -518,7 +510,6 @@ input[type="range"]::-webkit-slider-thumb {
   </footer>
 
 <script>
-// Your JavaScript remains exactly the same. No changes needed here.
 (() => {
 
 const rand=Math.random;
@@ -711,7 +702,7 @@ const plasmaImages2=["light.png","auro.png","neon.png","son.png"],
 plasmaTitles2=["<h3>Lightning</h3>","<h3>Aurora</h3>","<h3>Neon</h3>","<h3>Sun</h3>"],
 plasmaDescriptions2=["<p>Lightning is a powerful electrical discharge ionizing air into glowing channels. It occurs during a storm </p>","<p>It is a polar light display from solar particles exciting atmospheric gases into colors.</p>","<p>Is a glowing red-orange gas in signs, ionized by electricity for vibrant advertising lights.</p>","<p>It is a hot ionized ball of hydrogen and helium, fusing to power our solar system. It is also a star</p>"];
 var num2=0,images2=[],titles2=[],descriptions2=[];
-function updateContent2(){const slider=document.getElementById("slider");const titleArea=document.getElementById("title-area");const textArea=document.getElementById("text-area");if(!images2.length)return;slider.src=`images/${images2[num2]}`;titleArea.innerHTML=titles2[num2];textArea.innerHTML=descriptions2[num2];}
+function updateContent2(){const slider=document.getElementById("slider");const titleArea=document.getElementById("title-area");const textArea=document.getElementById("text-area");if(!images2.length)return;slider.src=images2[num2];titleArea.innerHTML=titles2[num2];textArea.innerHTML=descriptions2[num2];}
 document.getElementById('prev-btn-2').addEventListener('click', () => { if(!images2.length) return; num2=(num2-1+images2.length)%images2.length; updateContent2(); playClick(); });
 document.getElementById('next-btn-2').addEventListener('click', () => { if(!images2.length) return; num2=(num2+1)%images2.length; updateContent2(); playClick(); });
 
@@ -735,7 +726,7 @@ PhaseChangeDescriptions = [
 "<p>Gas &rarr; Plasma (it is a high energy input, atoms loses its electrons and it becomes charged).</p>",
 "<p>Plasma &rarr; Gas (cooling and it's charged particles calm down as electrons rejoin atoms).</p>"];
 var num3=0;
-function updateContent3(){const slider1=document.getElementById("slider1");const titleArea1=document.getElementById("title-area1");const textArea1=document.getElementById("text-area1");slider1.src=`images/${PhaseChangeImages[num3]}`;titleArea1.innerHTML=PhaseChangeTitles[num3];textArea1.innerHTML=PhaseChangeDescriptions[num3];}
+function updateContent3(){const slider1=document.getElementById("slider1");const titleArea1=document.getElementById("title-area1");const textArea1=document.getElementById("text-area1");slider1.src=PhaseChangeImages[num3];titleArea1.innerHTML=PhaseChangeTitles[num3];textArea1.innerHTML=PhaseChangeDescriptions[num3];}
 document.getElementById('prev-btn-3').addEventListener('click', () => { num3=(num3-1+PhaseChangeImages.length)%PhaseChangeImages.length; updateContent3(); playClick(); });
 document.getElementById('next-btn-3').addEventListener('click', () => { num3=(num3+1)%PhaseChangeImages.length; updateContent3(); playClick(); });
 
@@ -750,29 +741,29 @@ const nextTutorial = document.getElementById('next-tutorial');
 const pageIndicator = document.getElementById('tutorial-page-indicator');
 
 const tutorialStepsDesktop = [
-  { img: 'images/tut1.png', desc: 'Welcome To MatterSphere!' },
-  { img: 'images/tut2.png', desc: 'Use the state dropdown to see different states in the simulation.' },
-  { img: 'images/tut3.png', desc: 'Use the atoms dropdown to set how many atoms appear.' },
-  { img: 'images/tut4.png', desc: 'You can control the temperature to manipulate how the atoms behave.' },
-  { img: 'images/tut5.png', desc: 'The temperature unit can be changed for your preference.' },
-  { img: 'images/tut6.png', desc: 'Use Pause to stop the simulation, and Reset to return to the default state.' },
-  { img: 'images/tut7.png', desc: 'Click the "Mute sounds" checkbox to disable audio.' },
-  { img: 'images/tut8.png', desc: 'This panel shows examples of the selected state. It updates when you change the state.' },
-  { img: 'images/tut9.png', desc: 'This panel shows the different phase changes of matter.' },
-  { img: 'images/tut1O.png', desc: 'This color-coded bar is your guide for the temperature of each state.' },
+  { img: 'tut1.png', desc: 'Welcome To MatterSphere!' },
+  { img: 'tut2.png', desc: 'Use the state dropdown to see different states in the simulation.' },
+  { img: 'tut3.png', desc: 'Use the atoms dropdown to set how many atoms appear.' },
+  { img: 'tut4.png', desc: 'You can control the temperature to manipulate how the atoms behave.' },
+  { img: 'tut5.png', desc: 'The temperature unit can be changed for your preference.' },
+  { img: 'tut6.png', desc: 'Use Pause to stop the simulation, and Reset to return to the default state.' },
+  { img: 'tut7.png', desc: 'Click the "Mute sounds" checkbox to disable audio.' },
+  { img: 'tut8.png', desc: 'This panel shows examples of the selected state. It updates when you change the state.' },
+  { img: 'tut9.png', desc: 'This panel shows the different phase changes of matter.' },
+  { img: 'tut1O.png', desc: 'This color-coded bar is your guide for the temperature of each state.' },
 ];
 
 const tutorialStepsMobile = [
-  { img: 'images/mtut.png', desc: 'Welcome To MatterSphere!' },
-  { img: 'images/mtut2.png', desc: 'Use the state dropdown to see different states in the simulation.' },
-  { img: 'images/mtut3.png', desc: 'Use the atoms dropdown to set how many atoms appear.' },
-  { img: 'images/mtut4.png', desc: 'You can control the temperature to manipulate how the atoms behave.' },
-  { img: 'images/mtut5.png', desc: 'The temperature unit can be changed for your preference.' },
-  { img: 'images/mtut6.png', desc: 'Use Pause to stop the simulation, and Reset to return to the default state.' },
-  { img: 'images/mtut7.png', desc: 'Click the "Mute sounds" checkbox to disable audio.' },
-  { img: 'images/mtut8.png', desc: 'This panel shows examples of the selected state. It updates when you change the state.' },
-  { img: 'images/mtut9.png', desc: 'This panel shows the different phase changes of matter.' },
-  { img: 'images/mtut1O.png', desc: 'This color-coded bar is your guide for the temperature of each state.' },
+  { img: 'mtut.png', desc: 'Welcome To MatterSphere!' },
+  { img: 'mtut2.png', desc: 'Use the state dropdown to see different states in the simulation.' },
+  { img: 'mtut3.png', desc: 'Use the atoms dropdown to set how many atoms appear.' },
+  { img: 'mtut4.png', desc: 'You can control the temperature to manipulate how the atoms behave.' },
+  { img: 'mtut5.png', desc: 'The temperature unit can be changed for your preference.' },
+  { img: 'mtut6.png', desc: 'Use Pause to stop the simulation, and Reset to return to the default state.' },
+  { img: 'mtut7.png', desc: 'Click the "Mute sounds" checkbox to disable audio.' },
+  { img: 'mtut8.png', desc: 'This panel shows examples of the selected state. It updates when you change the state.' },
+  { img: 'mtut9.png', desc: 'This panel shows the different phase changes of matter.' },
+  { img: 'mtut1O.png', desc: 'This color-coded bar is your guide for the temperature of each state.' },
 ];
 
 let currentTutorial = 0;
@@ -831,30 +822,6 @@ function start(){
 sync();
 updateThumbColor();
 start();
-
-// NOTE: I noticed your JS was setting the image source without the 'images/' folder path.
-// I have updated the JS to correctly prepend 'images/' to the filenames.
-// If your images are in the same directory as the HTML file, you can remove the `images/` prefix.
-const originalUpdateContent2 = updateContent2;
-updateContent2 = function() {
-    const slider = document.getElementById("slider");
-    const titleArea = document.getElementById("title-area");
-    const textArea = document.getElementById("text-area");
-    if (!images2.length) return;
-    slider.src = `images/${images2[num2]}`; // Corrected path
-    titleArea.innerHTML = titles2[num2];
-    textArea.innerHTML = descriptions2[num2];
-};
-
-const originalUpdateContent3 = updateContent3;
-updateContent3 = function() {
-    const slider1 = document.getElementById("slider1");
-    const titleArea1 = document.getElementById("title-area1");
-    const textArea1 = document.getElementById("text-area1");
-    slider1.src = `images/${PhaseChangeImages[num3]}`; // Corrected path
-    titleArea1.innerHTML = PhaseChangeTitles[num3];
-    textArea1.innerHTML = PhaseChangeDescriptions[num3];
-};
 
 })();
 </script>
