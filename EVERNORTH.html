@@ -1,0 +1,822 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added for proper mobile scaling -->
+<meta name="theme-color" content="#87CEEB">
+<title>MatterSphere</title>
+<style>
+:root {
+  --bg: linear-gradient(135deg, #87CEEB, #228B22);
+  --panel: #006400;
+  --panel2: #228B22;
+  --text: #FFFFFF;
+  --mutetext: #F0FFF0;
+  --accent: #32CD32;
+  --warn: #FF4500;
+}
+
+* { 
+  box-sizing: border-box; 
+}
+
+html {
+  min-height: 100%;
+  background: var(--bg) no-repeat center center fixed;
+  background-size: cover;
+}
+
+body {
+  background: transparent;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  color: var(--text);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+main {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 10px 80px 10px; /* Adjusted padding */
+}
+
+#main-title {
+  font-size: 36px;
+  font-weight: bold;
+  color: var(--text);
+  margin: 0 0 20px 0;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+/* --- Base Layout: Desktop (> 1200px) --- */
+#app {
+  display: grid;
+  grid-template-columns: 280px 480px 280px 280px;
+  gap: 15px; /* Unified gap */
+  height: 510px;
+  width: 100%;
+  max-width: 1350px; /* Adjusted for new gap */
+  margin: 0 auto;
+}
+
+.panel, .sim, .sim2, .sim3 {
+  background: linear-gradient(180deg, var(--panel), var(--panel2));
+  border: 1px solid #006400;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  padding: 15px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.sim {
+  padding: 10px;
+  display: grid;
+  grid-template-rows: 1fr;
+  gap: 8px;
+}
+
+.sim2, .sim3 {
+  padding: 10px;
+  display: grid;
+  grid-template-rows: min-content 1fr min-content min-content;
+  gap: 8px;
+  height: 100%;
+}
+
+.title-area, .title-area1 {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 10px;
+  text-align: center;
+  color: var(--text);
+  font-size: 16px;
+  font-weight: bold;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(34, 139, 36, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#slider, #slider1 {
+  width: 100%;
+  height: 100%; /* Changed from 54% to fill space */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  object-fit: contain;
+  border: 2px solid var(--accent);
+}
+
+.text-area, .text-area1 {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 15px;
+  text-align: center;
+  color: var(--text);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto; /* Allow scrolling for long text */
+  border: 1px solid rgba(34, 139, 34, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.buttons-row, .buttons-row1 {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.nice1, .nice2, .nice21, .nice11 {
+  padding: 8px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #228B22, #32CD32);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  border: none;
+  border-radius: 4px;
+  flex: 1;
+  color: #FFFFFF;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.nice1:hover, .nice2:hover, .nice21:hover, .nice11:hover {
+  background: linear-gradient(135deg, #32CD32, #90EE90);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+#canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  border: 1px solid #006400;
+  background: #003300;
+  display: block;
+}
+
+.row { margin-bottom: 12px; }
+.row label { display:block; font-size:15px; color:var(--mutetext); font-weight: 600; }
+.row input[type="range"], .row select { width: 100%; }
+.row select, .pill {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #228B22;
+  background: #006400;
+  color: var(--text);
+  font-weight: bold;
+  transition: border-color 0.3s ease;
+}
+.row select:hover, .pill:hover {
+  border-color: var(--accent);
+}
+.pill {
+  display: inline-block;
+  color: var(--accent);
+  font-family: 'Courier New', Courier, monospace;
+  background: rgba(50, 205, 50, 0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.btn {
+  border:1px solid #228B22;
+  background: linear-gradient(135deg, #006400, #228B22);
+  color: var(--text);
+  padding:8px 10px; border-radius:8px; cursor:pointer; font-weight:600;
+  transition: all 0.3s ease;
+}
+.btn:hover { border-color: var(--accent); transform:translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.4); }
+.btn.primary { background: linear-gradient(135deg, #228B22, #32CD32); color:#FFFFFF; }
+.btn.warn { background: linear-gradient(135deg, #FF4500, #FF6347); color:#FFFFFF; }
+
+.switch { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--mutetext); font-style: italic; }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+
+input[type="range"] {
+  appearance: none;
+  height: 8px;
+  border-radius: 8px;
+  background: linear-gradient(to right,
+    #4da6ff 0%,
+    #4da6ff 44%,
+    #00cc66 44%,
+    #00cc66 61%,
+    #ff9933 61%,
+    #ff9933 83%,
+    #ff6b6b 83%,
+    #ff6b6b 100%);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+}
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: var(--thumb-bg, var(--accent));
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+
+#disclaimer {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 95%;
+  max-width: 1200px;
+  text-align: center;
+  color: var(--mutetext);
+  font-size: 12px;
+  font-style: italic;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 8px 15px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  z-index: 200;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--mutetext);
+  margin-top: 4px;
+  font-weight: bold;
+}
+
+#tutorial-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; }
+#tutorial-inner { background: var(--panel); padding: 20px; border-radius: 10px; width: 80%; max-width: 600px; position: relative; color: var(--text); }
+#close-modal { position: absolute; top: 10px; right: 10px; background: none; border: none; color: var(--text); font-size: 20px; cursor: pointer; }
+#tutorial-content { text-align: center; }
+#tutorial-img { width: 100%; height: auto; border-radius: 8px; margin-bottom: 10px; }
+#tutorial-desc { font-size: 14px; margin-bottom: 20px; }
+#tutorial-nav { display: flex; justify-content: space-between; align-items: center; }
+#tutorial-page-indicator { font-size: 14px; font-weight: bold; color: var(--mutetext); }
+#prev-tutorial, #next-tutorial { padding: 8px 16px; background: linear-gradient(135deg, #228B22, #32CD32); border: none; border-radius: 4px; color: #FFFFFF; cursor: pointer; }
+#prev-tutorial.hidden, #next-tutorial.hidden { visibility: hidden; }
+
+
+/* --- MODIFICATION 1: Tablet Layout (769px to 1200px) --- */
+@media (max-width: 1200px) {
+  main {
+    justify-content: flex-start; /* Align content to the top */
+  }
+
+  #app {
+    /* Create a 2x2 grid */
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: auto;
+    height: auto;
+    width: 95%;
+    max-width: 950px;
+    gap: 20px;
+  }
+
+  /* Re-order grid items to place simulation top-left */
+  .sim { order: 1; }
+  .panel { order: 2; }
+  .sim2 { order: 3; }
+  .sim3 { order: 4; }
+
+  .panel, .sim, .sim2, .sim3 {
+    min-height: 480px; /* Taller panels for tablet */
+    height: auto;
+  }
+
+  .sim2, .sim3 {
+    grid-template-rows: min-content 1fr min-content min-content;
+  }
+}
+
+
+/* --- MODIFICATION 2: Mobile Layout (< 768px) --- */
+@media (max-width: 768px) {
+    #main-title {
+        font-size: 28px; /* Slightly larger title for mobile */
+    }
+
+    #app {
+        /* Create a 1-column layout */
+        grid-template-columns: 1fr;
+        max-width: 480px;
+        gap: 25px;
+    }
+
+    /* Reorder to place simulation at the top, followed by controls */
+    .sim {
+        min-height: 50vh; /* Simulation view */
+        order: 1; /* Ensure it's first */
+    }
+    .panel {
+        min-height: 55vh; /* Controls panel */
+        order: 2;
+    }
+    .sim2, .sim3 {
+        min-height: 500px; /* Generous height for scrolled content */
+        order: 3;
+        /* UPDATED: Make the grid rows flexible to prevent content collision */
+        grid-template-rows: min-content auto auto min-content;
+    }
+
+    /* UPDATED: Constrain the image height in sim2 and sim3 */
+    #slider, #slider1 {
+        height: auto; /* Allow natural aspect ratio */
+        max-height: 220px; /* Prevent image from being too tall */
+    }
+
+    /* Enlarge fonts and interactive elements for better usability */
+    .row label {
+        font-size: 16px;
+    }
+    .text-area, .text-area1 {
+        font-size: 14px;
+        padding: 20px;
+    }
+    .title-area, .title-area1 {
+        font-size: 18px;
+    }
+    .nice1, .nice2, .nice11, .nice21, .btn {
+        font-size: 14px; /* Larger button text */
+        padding: 12px; /* Bigger touch target */
+    }
+    #disclaimer {
+        font-size: 11px;
+        padding: 8px 12px;
+    }
+    #tutorial-inner {
+      width: 90vw;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+}
+
+/* --- MODIFICATION 3: Landscape Mobile Layout --- */
+@media (max-width: 926px) and (max-height: 428px) and (orientation: landscape) {
+  main {
+    justify-content: flex-start;
+    padding-top: 15px;
+    padding-bottom: 70px; /* Keep space for disclaimer */
+  }
+
+  #app {
+    gap: 15px;
+  }
+
+  /* Allow panels to be shorter; scrolling the page is expected on landscape */
+  .sim, .panel {
+    min-height: 420px;
+  }
+  
+  /* THIS IS THE KEY FIX: Let info panels size naturally to their content */
+  .sim2, .sim3 {
+    min-height: auto;
+  }
+  
+  /* Make the image shorter to give the text area more room */
+  #slider, #slider1 {
+    max-height: 160px;
+  }
+
+  /* Give the text area a little bit of minimum space so it doesn't disappear */
+  .text-area, .text-area1 {
+    min-height: 80px; 
+  }
+}
+</style>
+</head>
+<body>
+  <main>
+    <h1 id="main-title">MatterSphere</h1>
+    <div id="app">
+      <div class="panel">
+        <div class="row">
+          <label>State</label>
+          <select id="stateSel">
+            <option value="solid" selected>Solid</option>
+            <option value="liquid">Liquid</option>
+            <option value="gas">Gas</option>
+            <option value="plasma">Plasma</option>
+          </select>
+        </div>
+        <div class="row">
+          <label>Atoms</label>
+          <select id="nSel">
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="150" selected>150</option>
+          </select>
+        </div>
+        <div class="row">
+          <label>Target temperature: <span id="Tval" class="pill"></span></label>
+          <input type="range" id="T" min="0.10" max="3.00" step="0.01" value="0.20" />
+          <div class="range-labels"><span id="Tmin"></span><span id="Tmax"></span></div>
+          <div style="font-size:11px;color:var(--mutetext);margin-top:4px;text-align:center;">
+            <span style="color:#4da6ff;">Solid</span> -
+            <span style="color:#00cc66;">Liquid</span> -
+            <span style="color:#ff9933;">Gas</span> -
+            <span style="color:#ff6b6b;">Plasma</span>
+          </div>
+        </div>
+        <div class="row">
+          <label style="margin-top:2%">Temperature units (display only)</label>
+          <select style="margin-top:2%" id="unitSel">
+            <option value="kelvin" selected>Kelvin (K)</option>
+            <option value="celsius">Celsius (°C)</option>
+            <option value="fahrenheit">Fahrenheit (°F)</option>
+          </select>
+        </div>
+        <div class="grid2" style="margin-top:auto; margin-bottom:10px;"> <!-- Pushed to bottom -->
+          <button id="reset" class="btn warn">Reset</button>
+          <button id="pause" class="btn primary">Pause</button>
+        </div>
+
+        <label class="switch"><input type="checkbox" id="mute"  /> Mute sounds</label>
+        <label class="switch"><input type="checkbox" style="display:none;"  id="showV" /> </label>
+        <button id="tutorial-btn" class="btn primary" style="margin-top: 10px;">Tutorial</button>
+      </div>
+
+      <div class="sim">
+        <div class="canvas-wrapper">
+          <canvas id="canvas"></canvas>
+        </div>
+      </div>
+
+      <div class="sim2">
+        <div class="title-area" id="title-area"></div>
+        <img id="slider" src="images/Sol.jpg" alt="Slider Image" />
+        <div class="text-area" id="text-area"></div>
+        <div class="buttons-row">
+          <button class="nice1" id="prev-btn-2"> &larr; Prev </button>
+          <button class="nice2" id="next-btn-2"> Next &rarr; </button>
+        </div>
+      </div>
+
+      <div class="sim3">
+        <div class="title-area1" id="title-area1"></div>
+        <img id="slider1" src="images/Freezing.png" alt="Slider Image" />
+        <div class="text-area1" id="text-area1"></div>
+        <div class="buttons-row1">
+          <button class="nice11" id="prev-btn-3"> &larr; Prev </button>
+          <button class="nice21" id="next-btn-3"> Next &rarr; </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="tutorial-modal">
+    <div id="tutorial-inner">
+      <button id="close-modal">X</button>
+      <div id="tutorial-content">
+        <img id="tutorial-img" src="" alt="Tutorial Step">
+        <p id="tutorial-desc"></p>
+      </div>
+      <div id="tutorial-nav">
+        <button id="prev-tutorial">Previous</button>
+        <span id="tutorial-page-indicator"></span>
+        <button id="next-tutorial">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <footer id="disclaimer">
+     <strong>Disclaimer:</strong> Rapid temperature changes are physically unrealistic — matter doesn’t instantly leap between
+    states! Quick adjustments may cause unstable or “broken” behavior in the simulation. Change temperatures gradually for smoother,
+    more believable results.
+  </footer>
+
+<script>
+(() => {
+
+const rand=Math.random;
+function randn(){let u=0,v=0;while(u===0)u=rand();while(v===0)v=rand();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+const clamp01=v=>Math.max(0,Math.min(1,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const nice=(x,d=2)=>Number(x).toFixed(d);
+
+const c = document.getElementById('canvas'), ctx = c.getContext('2d');
+const canvasWrapper = c.parentElement;
+const stateSel=document.getElementById('stateSel'),unitSel=document.getElementById('unitSel'),
+Tsl=document.getElementById('T'),Tval=document.getElementById('Tval'),
+TminLbl=document.getElementById('Tmin'),TmaxLbl=document.getElementById('Tmax'),
+resetB=document.getElementById('reset'),pauseB=document.getElementById('pause'),
+chk=document.getElementById('showV'),nSel=document.getElementById('nSel'),
+muteChk=document.getElementById('mute');
+
+let paused=false;
+
+const P={N:150,L:24,dt:0.003,stepsPerFrame:4,Ttarget:0.2,tau:0.3,vmax:8,eps:1,rc:2.5,
+  g:0.4,tempUnit:'kelvin',showV:false,autotune:true,wallRest:0.4,wallFric:0.95};
+let scaleKelvin=150;
+const meltT=1.37,boilT=1.87;
+
+const presets={
+  solid :{T:0.2,g:0.8,eps:6.0,scale:200,wallRest:0.25,wallFric:0.85},
+  liquid:{T:1.45,g:0.6,eps:0.9,scale:300,wallRest:0.18,wallFric:0.98},
+  gas   :{T:2.2,g:0.0,eps:0.005,scale:400,wallRest:0.99,wallFric:1.0},
+  plasma:{T:2.8,g:0.0,eps:0.002,scale:500,wallRest:1.0,wallFric:1.0}
+};
+
+let x,y,vx,vy,ax,ay,scale=1,vcmx=0,vcmy=0,lastT=0;
+const kvDiv=document.querySelector('.kv');
+
+const clickSound = new Audio('click.mp3');
+const slideSound = new Audio('slide.mp3');
+
+function playClick() {
+  if (!muteChk.checked) {
+    clickSound.currentTime = 0;
+    clickSound.play();
+  }
+}
+
+function playSlide() {
+  if (!muteChk.checked) {
+    slideSound.currentTime = 0;
+    slideSound.play();
+  }
+}
+
+function updateThumbColor() {
+  const min = Number(Tsl.min);
+  const max = Number(Tsl.max);
+  const val = Number(Tsl.value);
+  const percent = ((val - min) / (max - min)) * 100;
+  let color;
+  if (percent <= 44) color = '#4da6ff';
+  else if (percent <= 61) color = '#00cc66';
+  else if (percent <= 83) color = '#ff9933';
+  else color = '#ff6b6b';
+  Tsl.style.setProperty('--thumb-bg', color);
+}
+
+resetB.onclick = () => { applyPreset(stateSel.value); playClick(); };
+pauseB.onclick = () => { paused = !paused; pauseB.textContent = paused ? 'Resume' : 'Pause'; playClick(); };
+Tsl.oninput = () => {
+  P.Ttarget = Number(Tsl.value);
+  P.autotune = true;
+  sync();
+  updateThumbColor();
+  playSlide();
+};
+stateSel.onchange = () => { applyPreset(stateSel.value); playClick(); updateSliderForState2(stateSel.value); };
+nSel.onchange = () => { P.N = Number(nSel.value); init(); playClick(); };
+unitSel.onchange = () => { P.tempUnit = unitSel.value; sync(); playClick(); };
+chk.onchange = () => { P.showV = chk.checked; playClick(); };
+muteChk.onchange = () => { if (muteChk.checked) { playClick(); }};
+
+function resize() {
+  const newWidth = canvasWrapper.clientWidth;
+  const newHeight = canvasWrapper.clientHeight;
+
+  if (c.width !== newWidth || c.height !== newHeight) {
+    c.width = newWidth;
+    c.height = newHeight;
+  }
+
+  scale = Math.min(c.width, c.height) / P.L;
+}
+window.addEventListener('resize',resize);
+
+function alloc(){x=new Float64Array(P.N);y=new Float64Array(P.N);
+  vx=new Float64Array(P.N);vy=new Float64Array(P.N);
+  ax=new Float64Array(P.N);ay=new Float64Array(P.N);}
+
+function initPositions(){
+  const cols=Math.ceil(Math.sqrt(P.N)),rows=Math.ceil(P.N/cols);
+  const spacing=(P.L*0.55)/Math.max(1,cols-1);
+  const x0=(P.L-spacing*(cols-1))/2,y0=1.0;
+  let k=0;
+  for(let r=0;r<rows;r++){
+    for(let c2=0;c2<cols&&k<P.N;c2++,k++){
+      x[k]=x0+c2*spacing+(rand()-0.5)*0.02;
+      y[k]=Math.min(P.L-1,y0+r*spacing)+(rand()-0.5)*0.02;
+    }
+  }
+}
+
+function initVelocities(){const std=Math.sqrt(P.Ttarget);for(let i=0;i<P.N;i++){vx[i]=randn()*std;vy[i]=randn()*std;}}
+function init(){alloc();initPositions();initVelocities();computeForces();}
+function convertTemp(t){const K=t*scaleKelvin;if(P.tempUnit==='celsius')return K-273.15;if(P.tempUnit==='fahrenheit')return(K-273.15)*9/5+32;return K;}
+function unitSuffix(){return P.tempUnit==='kelvin'?'K':(P.tempUnit==='celsius'?'°C':'°F');}
+function sync(){Tval.textContent=nice(convertTemp(P.Ttarget))+' '+unitSuffix();TminLbl.textContent=nice(convertTemp(Number(Tsl.min)))+' '+unitSuffix();TmaxLbl.textContent=nice(convertTemp(Number(Tsl.max)))+' '+unitSuffix();}
+
+function computeForces(){
+  ax.fill(0);ay.fill(0);
+  for(let i=0;i<P.N;i++){
+    for(let j=i+1;j<P.N;j++){
+      let dx=x[i]-x[j],dy=y[i]-y[j];let r2=dx*dx+dy*dy;if(r2>P.rc*P.rc)continue;if(r2<1e-6)r2=1e-6;
+      const inv2=1/r2,inv6=inv2*inv2*inv2,inv12=inv6*inv6;const fs=24*P.eps*inv2*(2*inv12-inv6);
+      const fx=fs*dx,fy=fs*dy;ax[i]+=fx;ay[i]+=fy;ax[j]-=fx;ay[j]-=fy;
+    }
+  }
+  for(let i=0;i<P.N;i++)ay[i]-=P.g;
+}
+
+function measureT(){let sx=0,sy=0;for(let i=0;i<P.N;i++){sx+=vx[i];sy+=vy[i];}
+vcmx=sx/P.N;vcmy=sy/P.N;let KE=0;for(let i=0;i<P.N;i++){let vxr=vx[i]-vcmx,vyr=vy[i]-vcmy;KE+=0.5*(vxr*vxr+vyr*vyr);}return(2*KE)/(2*P.N-2);}
+
+function step(dt){
+  const half=0.5*dt;
+  for(let i=0;i<P.N;i++){
+    vx[i]+=half*ax[i]; vy[i]+=half*ay[i];x[i]+=vx[i]*dt; y[i]+=vy[i]*dt;
+    if(y[i]<0){y[i]=0;if(vy[i]<0)vy[i]*=-P.wallRest;vx[i]*=P.wallFric;}
+    if(y[i]>P.L){y[i]=P.L;if(vy[i]>0)vy[i]*=-P.wallRest;}
+    if(x[i]<0){x[i]=0;if(vx[i]<0)vx[i]*=-P.wallRest;}
+    if(x[i]>P.L){x[i]=P.L;if(vx[i]>0)vx[i]*=-P.wallRest;}
+  }
+  computeForces();
+  for(let i=0;i<P.N;i++){vx[i]+=half*ax[i];vy[i]+=half*ay[i];}
+  const Tnow=measureT();lastT=Tnow;const s=Math.sqrt(Math.max(0,1+(dt/P.tau)*((P.Ttarget/Tnow)-1)));
+  for(let i=0;i<P.N;i++){vx[i]=vcmx+(vx[i]-vcmx)*s;vy[i]=vcmy+(vy[i]-vcmy)*s;}
+  if(P.Ttarget>=meltT&&P.Ttarget<boilT){const liquidFlowStrength=clamp01((P.Ttarget-meltT)/0.2);for(let i=0;i<P.N;i++){vx[i]*=(1-0.0025*Math.abs(vx[i]));vy[i]*=(1-0.0025*Math.abs(vy[i]));const depth=y[i]/P.L;vy[i]-=0.02*liquidFlowStrength*(1-depth);}}
+  if(P.autotune){const tNorm=clamp01((P.Ttarget-0.2)/(3.0-0.2));const a=Math.pow(tNorm,0.9),b=Math.pow(tNorm,0.7);P.eps=lerp(6.0,0.05,a);P.g=lerp(0.8,0.00,b);P.wallRest=lerp(0.40,0.98,tNorm);P.wallFric=lerp(0.92,1.00,tNorm);}
+}
+
+function world(px,py){const Lp=P.L*scale,ox=(c.width-Lp)/2,oy=(c.height-Lp)/2;return[ox+px*scale,oy+(P.L-py)*scale];}
+
+function render(){
+  ctx.clearRect(0,0,c.width,c.height);
+  const Lp=P.L*scale,ox=(c.width-Lp)/2,oy=(c.height-Lp)/2;
+  const plasmaMix=clamp01((P.Ttarget-2.0)/(2.8-2.0));
+  for(let i=0;i<P.N;i++){
+    const[sx,sy]=world(x[i],y[i]);const v=Math.hypot(vx[i],vy[i]);const t=Math.tanh(v/3);
+    const gasHue=210+(55-210)*t,gasSat=90,gasLight=60;
+    let plasmaHueRaw=270+(150*t);if(plasmaHueRaw>360)plasmaHueRaw-=360;
+    const plasmaSat=100,plasmaLight=65;const finalHue=lerp(gasHue,plasmaHueRaw,plasmaMix);
+    const finalSat=lerp(gasSat,plasmaSat,plasmaMix);const finalLight=lerp(gasLight,plasmaLight,plasmaMix);
+    ctx.fillStyle=`hsl(${finalHue}, ${finalSat}%, ${finalLight}%)`;
+    ctx.beginPath();ctx.arc(sx,sy,3,0,2*Math.PI);ctx.fill();
+  }
+}
+
+function updateKV(){if(!kvDiv)return;const unit=unitSuffix();kvDiv.innerHTML=`<div>Target T</div><div>${nice(convertTemp(P.Ttarget))} ${unit}</div><div>Measured T</div><div>${nice(convertTemp(lastT))} ${unit}</div><div>ε (LJ)</div><div>${nice(P.eps,2)}</div><div>N</div><div>${P.N}</div><div>g</div><div>${nice(P.g,3)}</div>`;}
+
+function animate(){requestAnimationFrame(animate);if(!paused){P.dt=0.0025/Math.sqrt(1+P.Ttarget);for(let s=0;s<P.stepsPerFrame;s++)step(P.dt);}render();updateKV();}
+
+function applyPreset(st){
+  const p=presets[st];P.autotune=(st==='liquid');P.g=p.g;P.Ttarget=p.T;P.eps=p.eps;
+  P.wallRest=p.wallRest;P.wallFric=p.wallFric;if(p.scale)scaleKelvin=p.scale;
+  Tsl.value=P.Ttarget;sync();updateThumbColor();alloc();initPositions();
+  for(let i=0;i<P.N;i++){vx[i]=0;vy[i]=0;}computeForces();
+  if(st==='solid'){setTimeout(()=>{P.g=0.6;},1200);}
+  if(st==='liquid'){const std=Math.sqrt(P.Ttarget);for(let i=0;i<P.N;i++){vx[i]=randn()*std;vy[i]=randn()*std*0.5;}}
+  if(st==='gas'||st==='plasma'){const speed=(st==='plasma')?2.2+rand()*1.2:1.8+rand()*1.5;for(let i=0;i<P.N;i++){const angle=rand()*2*Math.PI;vx[i]=Math.cos(angle)*speed;vy[i]=Math.sin(angle)*speed;}}
+}
+
+
+const solidImages2=["Sol.jpg","Soll2.png","Sol3.png","Sol4.png"],
+solidTitles2=["<h3>Rocks</h3>","<h3>Plastic</h3>","<h3>Wood</h3>","<h3>Books</h3>"],
+solidDescriptions2=["<p>Natural solids formed from minerals through geological processes, making up the Earth's crust and mountains.</p>","<p>Synthetic polymer material from petroleum, a an easily molded for packaging, toys, and everyday items.</p>","<p>Organic solid of cellulose fibers from trees, prized for strength in building and furniture.</p>","<p>Bound pages of printed knowledge, preserving stories and information for generations.</p>"];
+const liquidImages2=["mil.png","watt.png","honey.png","oil.png"],
+liquidTitles2=["<h3>Milk</h3>","<h3>Water</h3>","<h3>Honey</h3>","<h3>Oil</h3>"],
+liquidDescriptions2=["<p>Nutrient-rich white fluid from mammals, loaded with proteins, fats, and vitamins for growth.</p>","<p>Is a clear liquid extremely vital for life, comprising 60% of the body and 71% of Earth's surface.</p>","<p>Golden, viscous sweetener from bees, with natural antibacterial properties for health and food.</p>","<p>Hydrocarbon liquid from underground, key for fuel, cooking, and industrial lubrication.</p>"];
+const gasImages2=["Helium.png","Cho.png","oxy.png","Nit.png"],
+gasTitles2=["<h3>Helium</h3>","<h3>Chlorine</h3>","<h3>Oxygen</h3>","<h3>Nitrogen</h3>"],
+gasDescriptions2=["<p>Light, inert noble gas for balloons and cryogenics; second most abundant in the universe.</p>","<p>Greenish-yellow gas used as disinfectant in pools and for making plastics and bleach.</p>","<p>Essential gas for breathing and combustion, forming 21% of Earth's atmosphere.</p>","<p>is a major atmospheric gas (78%) vital for plants via fixation and used in fertilizers.</p>"];
+const plasmaImages2=["light.png","auro.png","neon.png","son.png"],
+plasmaTitles2=["<h3>Lightning</h3>","<h3>Aurora</h3>","<h3>Neon</h3>","<h3>Sun</h3>"],
+plasmaDescriptions2=["<p>Is a powerful electrical discharge ionizing air into glowing channels. It occurs during a storm </p>","<p>It is a polar light display from solar particles exciting atmospheric gases into colors.</p>","<p>Glowing red-orange gas in signs, ionized by electricity for vibrant advertising lights.</p>","<p>Hot ionized ball of hydrogen and helium, fusing to power our solar system.</p>"];
+var num2=0,images2=[],titles2=[],descriptions2=[];
+function updateContent2(){const slider=document.getElementById("slider");const titleArea=document.getElementById("title-area");const textArea=document.getElementById("text-area");if(!images2.length)return;slider.src=images2[num2];titleArea.innerHTML=titles2[num2];textArea.innerHTML=descriptions2[num2];}
+document.getElementById('prev-btn-2').addEventListener('click', () => { if(!images2.length) return; num2=(num2-1+images2.length)%images2.length; updateContent2(); playClick(); });
+document.getElementById('next-btn-2').addEventListener('click', () => { if(!images2.length) return; num2=(num2+1)%images2.length; updateContent2(); playClick(); });
+
+function updateSliderForState2(state){
+if(state==='solid'){images2=solidImages2;titles2=solidTitles2;descriptions2=solidDescriptions2;}
+else if(state==='liquid'){images2=liquidImages2;titles2=liquidTitles2;descriptions2=liquidDescriptions2;}
+else if(state==='gas'){images2=gasImages2;titles2=gasTitles2;descriptions2=gasDescriptions2;}
+else if(state==='plasma'){images2=plasmaImages2;titles2=plasmaTitles2;descriptions2=plasmaDescriptions2;}
+num2=0;updateContent2();
+}
+
+const PhaseChangeImages = ["Freezing.png", "Melting.png", "Sub.png", "coon.png", "Vap.png", "Dep.png", "Ion.png", "Recombination.png"],
+PhaseChangeTitles = ["<h3>Freezing</h3>","<h3>Melting</h3>","<h3>Sublimation</h3>","<h3>Condensation</h3>","<h3>Vaporization</h3>","<h3>Deposition</h3>","<h3>Ionization</h3>","<h3>Recombination</h3>"],
+PhaseChangeDescriptions = ["<p>Liquid &rarr; Solid (lose heat, molecules slow down and form a firm, ordered shape).</p>","<p>Solid &rarr; Liquid (gain energy, bonds loosen so particles can slide past each other).</p>","<p>Solid &rarr; Gas (direct change, particles break free from the solid and spread out).</p>","<p>Gas &rarr; Liquid (release heat, fast-moving particles slow down and stick together).</p>","<p>Liquid &rarr; Gas (gain heat, surface particles gain speed and escape into space).</p>","<p>Gas &rarr; Solid (direct change, gas particles lose speed and settle into solid crystals).</p>","<p>Gas &rarr; Plasma (high energy input, atoms lose electrons and become charged).</p>","<p>Plasma &rarr; Gas (cooling, charged particles calm down as electrons rejoin atoms).</p>"];
+var num3=0;
+function updateContent3(){const slider1=document.getElementById("slider1");const titleArea1=document.getElementById("title-area1");const textArea1=document.getElementById("text-area1");slider1.src=PhaseChangeImages[num3];titleArea1.innerHTML=PhaseChangeTitles[num3];textArea1.innerHTML=PhaseChangeDescriptions[num3];}
+document.getElementById('prev-btn-3').addEventListener('click', () => { num3=(num3-1+PhaseChangeImages.length)%PhaseChangeImages.length; updateContent3(); playClick(); });
+document.getElementById('next-btn-3').addEventListener('click', () => { num3=(num3+1)%PhaseChangeImages.length; updateContent3(); playClick(); });
+
+
+const tutorialBtn = document.getElementById('tutorial-btn');
+const tutorialModal = document.getElementById('tutorial-modal');
+const closeModal = document.getElementById('close-modal');
+const tutorialImg = document.getElementById('tutorial-img');
+const tutorialDesc = document.getElementById('tutorial-desc');
+const prevTutorial = document.getElementById('prev-tutorial');
+const nextTutorial = document.getElementById('next-tutorial');
+const pageIndicator = document.getElementById('tutorial-page-indicator');
+
+const tutorialStepsDesktop = [
+  { img: 'tut1.png', desc: 'Welcome To MatterSphere!' },
+  { img: 'tut2.png', desc: 'Use the state dropdown to see different states in the simulation.' },
+  { img: 'tut3.png', desc: 'Use the atoms dropdown to set how many atoms appear.' },
+  { img: 'tut4.png', desc: 'You can control the temperature to manipulate how the atoms behave.' },
+  { img: 'tut5.png', desc: 'The temperature unit can be changed for your preference.' },
+  { img: 'tut6.png', desc: 'Use Pause to stop the simulation, and Reset to return to the default state.' },
+  { img: 'tut7.png', desc: 'Click the "Mute sounds" checkbox to disable audio.' },
+  { img: 'tut8.png', desc: 'This panel shows examples of the selected state. It updates when you change the state.' },
+  { img: 'tut9.png', desc: 'This panel shows the different phase changes of matter.' },
+  { img: 'tut1O.png', desc: 'This color-coded bar is your guide for the temperature of each state.' },
+];
+
+const tutorialStepsMobile = [
+  { img: 'mtut.png', desc: 'Welcome To MatterSphere!' },
+  { img: 'mtut2.png', desc: 'Use the state dropdown to see different states in the simulation.' },
+  { img: 'mtut3.png', desc: 'Use the atoms dropdown to set how many atoms appear.' },
+  { img: 'mtut4.png', desc: 'You can control the temperature to manipulate how the atoms behave.' },
+  { img: 'mtut5.png', desc: 'The temperature unit can be changed for your preference.' },
+  { img: 'mtut6.png', desc: 'Use Pause to stop the simulation, and Reset to return to the default state.' },
+  { img: 'mtut7.png', desc: 'Click the "Mute sounds" checkbox to disable audio.' },
+  { img: 'mtut8.png', desc: 'This panel shows examples of the selected state. It updates when you change the state.' },
+  { img: 'mtut9.png', desc: 'This panel shows the different phase changes of matter.' },
+  { img: 'mtut1O.png', desc: 'This color-coded bar is your guide for the temperature of each state.' },
+];
+
+let currentTutorial = 0;
+let activeTutorialSteps = [];
+
+function isMobile() {
+    return window.innerWidth <= 768; /* Adjusted to match media query */
+}
+
+function updateTutorial() {
+  if (activeTutorialSteps.length === 0) return;
+  const currentStep = activeTutorialSteps[currentTutorial];
+  tutorialImg.src = currentStep.img;
+  tutorialDesc.textContent = currentStep.desc;
+  pageIndicator.textContent = `Page ${currentTutorial + 1} of ${activeTutorialSteps.length}`;
+  prevTutorial.classList.toggle('hidden', currentTutorial === 0);
+  nextTutorial.classList.toggle('hidden', currentTutorial === activeTutorialSteps.length - 1);
+}
+
+tutorialBtn.addEventListener('click', () => {
+  activeTutorialSteps = isMobile() ? tutorialStepsMobile : tutorialStepsDesktop;
+  currentTutorial = 0;
+  updateTutorial();
+  tutorialModal.style.display = 'flex';
+  playClick();
+});
+
+closeModal.addEventListener('click', () => {
+  tutorialModal.style.display = 'none';
+  playClick();
+});
+
+prevTutorial.addEventListener('click', () => {
+  if (currentTutorial > 0) {
+    currentTutorial--;
+    playClick();
+    updateTutorial();
+  }
+});
+
+nextTutorial.addEventListener('click', () => {
+  if (currentTutorial < activeTutorialSteps.length - 1) {
+    currentTutorial++;
+    playClick();
+    updateTutorial();
+  }
+});
+
+function start(){
+  resize();
+  applyPreset('solid');
+  updateSliderForState2('solid');
+  updateContent3();
+  animate();
+}
+sync();
+updateThumbColor();
+start();
+
+})();
+</script>
+
+</body>
+</html>

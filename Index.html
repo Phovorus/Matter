@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MatterSphere</title>
+<style>
+    :root{
+        --bg: linear-gradient(135deg, #87CEEB, #228B22);
+        --text: #fff;
+        --accent: #32CD32;
+        --panel: #006400;
+        --shadow: rgba(0, 0, 0, .3);
+    }
+    
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    html, body {
+        height: 100%;
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        overflow-x: hidden; 
+    }
+    
+    .hero {
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 2rem 1rem;
+        position: relative;
+    }
+
+    h1 {
+        font-size: clamp(2.5rem, 12vw, 5rem);
+        background: linear-gradient(135deg, var(--text), var(--accent));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
+    }
+    .subtitle{font-size:clamp(1.2rem,4vw,1.5rem);margin-bottom:1rem;opacity:0;animation:fadeInUp 1s ease-out .5s forwards;}
+    .description{font-size:clamp(1rem,3.5vw,1.1rem);line-height:1.6;margin-bottom:2rem;opacity:0;animation:fadeInUp 1s ease-out .8s forwards;}
+    .start-section{opacity:0;animation:fadeInUp 1s ease-out 1s forwards;}
+    .start-btn{background:linear-gradient(135deg,var(--panel),var(--accent));color:var(--text);border:none;padding:1rem 2rem;font-size:clamp(1.1rem,4vw,1.4rem);font-weight:bold;border-radius:50px;cursor:pointer;transition:all .3s ease;box-shadow:0 8px 20px var(--shadow);position:relative;overflow:hidden;min-height:44px;min-width:44px;}
+    .start-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:left .5s;}
+    .start-btn:hover::before, .start-btn:active::before{left:100%;}
+    .start-btn:hover, .start-btn:active{transform:translateY(-3px) scale(1.05);box-shadow:0 12px 25px var(--shadow);}
+    .hero::before{
+	content:'';
+	position:absolute;
+	inset:0;
+	background:radial-gradient(circle at 20% 80%,rgba(50,205,50,.1)0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(135,206,235,.1)0%,transparent 50%);animation:shimmer 6s ease-in-out infinite; pointer-events: none;}
+    .particles{position:absolute;inset:0;pointer-events:none;z-index:0;}
+    .particle{position:absolute;width:4px;height:4px;background:var(--accent);border-radius:50%;animation:float 4s ease-in-out infinite;}
+    #loading{position:fixed;inset:0;background:var(--bg);display:flex;justify-content:center;align-items:center;flex-direction:column;z-index:1000;}
+    #loading.hidden{display:none;}
+    .loading-content{display:flex;flex-direction:column;align-items:center;gap:1.5rem;}
+    .spinner{border:4px solid rgba(255,255,255,.3);border-top:4px solid var(--accent);border-radius:50%;width:60px;height:60px;animation:spin 1s linear infinite;}
+    .loading-text{font-size:1.4rem;font-weight:bold;}
+
+    @keyframes shimmer { 0%, 100% { opacity: .5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.1); } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes float { 0% { transform: translateY(100vh) scale(0); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateY(-100px) scale(1); opacity: 0; } }
+    
+    @media (max-width: 768px) { .hero { padding: 2rem 1.5rem; } }
+    @media (max-width: 480px) {
+        .hero { padding: 1.5rem 1rem; }
+        .title-group { gap: .8rem; margin-bottom: 1rem; }
+        .description { margin-bottom: 1.5rem; }
+    }
+    @media (orientation: landscape) and (max-height: 500px) {
+        .hero { padding: 1rem; }
+        .title-group { margin-bottom: 0.5rem; }
+        .subtitle { margin-bottom: 0.5rem; }
+        .description { margin-bottom: 1rem; }
+        h1 { font-size: 2.2rem; }
+        .subtitle, .description, .start-btn { font-size: 1rem; }
+    }
+
+    @media (min-height: 650px) {
+        html, body {
+            overflow: hidden;
+        }
+    }
+
+</style>
+</head>
+<body>
+    <div class="hero">
+        <div class="particles" id="particles"></div>
+        <div class="content">
+            <div class="title-group"><h1>MatterSphere</h1></div>
+            <p class="subtitle">Interactive States of Matter Simulation</p>
+            <p class="description">
+                Dive into the dynamic world of atomic behavior. Witness solids crystallize, <br>
+                liquids flow, gases expand, and plasmas ignite. Adjust temperatures and explore
+                phase transitions in an immersive, real-time environment.
+            </p>
+            <div class="start-section">
+                <button class="start-btn" onclick="startSimulation()">Launch Simulation</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading" class="hidden">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <div class="loading-text">Initializing MatterSphere...</div>
+        </div>
+    </div>
+
+    <script>
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 20;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 4 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                container.appendChild(particle);
+            }
+        }
+		
+        function startSimulation() {
+            const loadingScreen = document.getElementById('loading');
+            loadingScreen.classList.remove('hidden');
+
+            setTimeout(() => {
+                window.location.href = 'EVERNORTH.html'; 
+            }, 2500);
+        }
+
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                const loadingScreen = document.getElementById('loading');
+                loadingScreen.classList.add('hidden');
+            }
+        });
+        
+        window.addEventListener('load', createParticles);
+    </script>
+</body>
+</html>
