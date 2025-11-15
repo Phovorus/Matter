@@ -1,9 +1,14 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added for proper mobile scaling -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#87CEEB">
 <title>MatterSphere</title>
+
+<!-- CHANGED HERE: Added preload hints for initial images -->
+<link rel="preload" href="images/Sol.jpg" as="image">
+<link rel="preload" href="images/Freezing.png" as="image">
+
 <style>
 :root {
   --bg: linear-gradient(135deg, #87CEEB, #228B22);
@@ -468,7 +473,8 @@ input[type="range"]::-webkit-slider-thumb {
 
       <div class="sim2">
         <div class="title-area" id="title-area"></div>
-        <img id="slider" src="images/Sol.jpg" alt="Slider Image" />
+        <!-- CHANGED HERE: Added loading="lazy" -->
+        <img id="slider" src="images/Sol.jpg" alt="Slider Image" loading="lazy" />
         <div class="text-area" id="text-area"></div>
         <div class="buttons-row">
           <button class="nice1" id="prev-btn-2"> &larr; Prev </button>
@@ -478,7 +484,8 @@ input[type="range"]::-webkit-slider-thumb {
 
       <div class="sim3">
         <div class="title-area1" id="title-area1"></div>
-        <img id="slider1" src="images/Freezing.png" alt="Slider Image" />
+        <!-- CHANGED HERE: Added loading="lazy" -->
+        <img id="slider1" src="images/Freezing.png" alt="Slider Image" loading="lazy" />
         <div class="text-area1" id="text-area1"></div>
         <div class="buttons-row1">
           <button class="nice11" id="prev-btn-3"> &larr; Prev </button>
@@ -492,7 +499,8 @@ input[type="range"]::-webkit-slider-thumb {
     <div id="tutorial-inner">
       <button id="close-modal">X</button>
       <div id="tutorial-content">
-        <img id="tutorial-img" src="" alt="Tutorial Step">
+        <!-- CHANGED HERE: Added loading="lazy" -->
+        <img id="tutorial-img" src="" alt="Tutorial Step" loading="lazy">
         <p id="tutorial-desc"></p>
       </div>
       <div id="tutorial-nav">
@@ -510,6 +518,7 @@ input[type="range"]::-webkit-slider-thumb {
   </footer>
 
 <script>
+// Your JavaScript remains exactly the same. No changes needed here.
 (() => {
 
 const rand=Math.random;
