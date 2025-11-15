@@ -252,12 +252,38 @@ input[type="range"]::-webkit-slider-thumb {
   font-size: 12px;
   font-style: italic;
   background: rgba(0, 0, 0, 0.6);
-  padding: 8px 15px;
+  padding: 8px 40px 8px 15px; /* Adjusted padding for close button */
   border-top: 1px solid rgba(255,255,255,0.1);
   z-index: 200;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
+
+#close-disclaimer {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--mutetext);
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 5px;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+#close-disclaimer:hover {
+  opacity: 1;
+}
+
+#show-disclaimer-btn {
+  display: none;
+}
+
 
 .range-labels {
   display: flex;
@@ -362,7 +388,7 @@ input[type="range"]::-webkit-slider-thumb {
     }
     #disclaimer {
         font-size: 11px;
-        padding: 8px 12px;
+        padding: 8px 35px 8px 12px;
     }
     #tutorial-inner {
       width: 90vw;
@@ -453,6 +479,7 @@ input[type="range"]::-webkit-slider-thumb {
         <label class="switch"><input type="checkbox" id="mute"  /> Mute sounds</label>
         <label class="switch"><input type="checkbox" style="display:none;"  id="showV" /> </label>
         <button id="tutorial-btn" class="btn primary" style="margin-top: 10px;">Tutorial</button>
+        <button id="show-disclaimer-btn" class="btn" style="margin-top: 10px;">Show Disclaimer</button>
       </div>
 
       <div class="sim">
@@ -501,7 +528,8 @@ input[type="range"]::-webkit-slider-thumb {
   <footer id="disclaimer">
      <strong>Disclaimer:</strong> Rapid temperature changes are physically unrealistic — matter doesn’t instantly leap between
     states! Quick adjustments may cause unstable or “broken” behavior in the simulation. Change temperatures gradually for smoother,
-    more believable results.
+    more believable results. ||| Images may load longer than expected, please wait. 
+    <button id="close-disclaimer" title="Close disclaimer">&times;</button>
   </footer>
 
 <script>
@@ -521,6 +549,10 @@ TminLbl=document.getElementById('Tmin'),TmaxLbl=document.getElementById('Tmax'),
 resetB=document.getElementById('reset'),pauseB=document.getElementById('pause'),
 chk=document.getElementById('showV'),nSel=document.getElementById('nSel'),
 muteChk=document.getElementById('mute');
+const disclaimer = document.getElementById('disclaimer');
+const closeDisclaimerBtn = document.getElementById('close-disclaimer');
+const showDisclaimerBtn = document.getElementById('show-disclaimer-btn');
+
 
 let paused=false;
 
@@ -806,6 +838,19 @@ nextTutorial.addEventListener('click', () => {
     updateTutorial();
   }
 });
+
+closeDisclaimerBtn.addEventListener('click', () => {
+  disclaimer.style.display = 'none';
+  showDisclaimerBtn.style.display = 'block';
+  playClick();
+});
+
+showDisclaimerBtn.addEventListener('click', () => {
+  disclaimer.style.display = 'block';
+  showDisclaimerBtn.style.display = 'none';
+  playClick();
+});
+
 
 function start(){
   resize();
