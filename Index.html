@@ -30,17 +30,20 @@
 
 	body::before {
     content: '';
-    position: fixed; /* This locks it to the screen */
+    position: fixed; /* Locks the background to the screen glass */
     top: 0;
     left: 0;
     width: 100%;
-    height: 100vh; /* Covers full height */
-    background: var(--bg); /* The gradient moves here */
-    z-index: -1; /* Puts it behind the text */
+    height: 100vh; /* Forces it to fill the visual screen */
     
-    /* Ensures it stays perfect on mobile resize */
-    background-size: cover; 
-    will-change: transform;
+    background: var(--bg); /* Apply the gradient here */
+    
+    z-index: -5; /* Sends it to the very back */
+    pointer-events: none; /* Ensures you can still click buttons */
+    
+    /* Ensures smooth rendering on mobile */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
 }
     
  .hero {
@@ -169,6 +172,7 @@
 </body>
 
 </html>
+
 
 
 
