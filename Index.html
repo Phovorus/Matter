@@ -12,6 +12,13 @@
         --panel: #006400;
         --shadow: rgba(0, 0, 0, .3);
     }
+
+	html {
+    /* This is the fallback color. If the gradient slips, 
+       you see this Green instead of White. */
+    background-color: #228B22; 
+    min-height: 100%;
+}
     
     * {
         box-sizing: border-box;
@@ -19,33 +26,37 @@
         padding: 0;
     }
 
-    html, body {
-        min-height: 100%; 
-        background: var(--bg);
-        
-        color: var(--text);
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        overflow-x: relative;  
-    }
+  body {
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    color: var(--text);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
+    position: relative;
+    /* Ensure body has no background, so it doesn't block the fixed layer */
+    background: transparent; 
+}
 
-	body::before {
+/* 4. THE FIXED BACKGROUND LAYER */
+body::before {
     content: '';
-    position: fixed; /* Locks the background to the screen glass */
+    position: fixed; /* Locks to screen */
+    
+    /* USE INSET INSTEAD OF WIDTH/HEIGHT */
+    /* This forces it to touch all 4 corners of the screen */
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100vh; /* Forces it to fill the visual screen */
+    right: 0;
+    bottom: 0;
     
-    background: var(--bg); /* Apply the gradient here */
+    background: var(--bg);
+    z-index: -10; /* Deepest layer */
     
-    z-index: -5; /* Sends it to the very back */
-    pointer-events: none; /* Ensures you can still click buttons */
-    
-    /* Ensures smooth rendering on mobile */
-    -webkit-transform: translateZ(0);
+    /* Prevents repainting glitches on Chrome Android */
     transform: translateZ(0);
+    -webkit-transform: translateZ(0);
 }
-    
  .hero {
         min-height: 100dvh;
         display: flex;
@@ -172,6 +183,7 @@
 </body>
 
 </html>
+
 
 
 
