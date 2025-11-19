@@ -25,8 +25,23 @@
         
         color: var(--text);
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        overflow-x: hidden;  
+        overflow-x: relative;  
     }
+
+	body::before {
+    content: '';
+    position: fixed; /* This locks it to the screen */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh; /* Covers full height */
+    background: var(--bg); /* The gradient moves here */
+    z-index: -1; /* Puts it behind the text */
+    
+    /* Ensures it stays perfect on mobile resize */
+    background-size: cover; 
+    will-change: transform;
+}
     
  .hero {
         min-height: 100dvh;
@@ -154,5 +169,6 @@
 </body>
 
 </html>
+
 
 
