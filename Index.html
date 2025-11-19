@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- ADDED viewport-fit=cover: This forces the HTML to go UNDER the notch and status bar -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MatterSphere</title>
 <style>
     :root{
@@ -12,13 +13,6 @@
         --panel: #006400;
         --shadow: rgba(0, 0, 0, .3);
     }
-
-	html {
-    /* This is the fallback color. If the gradient slips, 
-       you see this Green instead of White. */
-    background-color: #228B22; 
-    min-height: 100%;
-}
     
     * {
         box-sizing: border-box;
@@ -26,37 +20,50 @@
         padding: 0;
     }
 
-  body {
-    min-height: 100%;
-    margin: 0;
-    padding: 0;
-    color: var(--text);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    overflow-x: hidden;
-    position: relative;
-    /* Ensure body has no background, so it doesn't block the fixed layer */
-    background: transparent; 
-}
+    /* --- THE FIX IS HERE --- */
+    
+    /* 1. TARGET THE ROOT (Grandparent) */
+    html {
+        /* This kills the white. We paint the base canvas green. 
+           If the gradient slips or the phone bounces, it shows Green, not White. */
+        background-color: #228B22; 
+        
+        /* This ensures the HTML tag is AT LEAST as tall as the screen, 
+           but grows if content is longer. */
+        min-height: 100%;
+        
+        /* Fixes the "slidebar inside colors" issue by making HTML the master container */
+        width: 100%;
+        overflow-x: hidden;
+    }
 
-/* 4. THE FIXED BACKGROUND LAYER */
-body::before {
-    content: '';
-    position: fixed; /* Locks to screen */
-    
-    /* USE INSET INSTEAD OF WIDTH/HEIGHT */
-    /* This forces it to touch all 4 corners of the screen */
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    
-    background: var(--bg);
-    z-index: -10; /* Deepest layer */
-    
-    /* Prevents repainting glitches on Chrome Android */
-    transform: translateZ(0);
-    -webkit-transform: translateZ(0);
-}
+    /* 2. TARGET THE BODY (Parent) */
+    body {
+        min-height: 100vh; /* Use VH here to force full screen height */
+        width: 100%;
+        background: transparent; /* Let the fixed gradient show through */
+        
+        color: var(--text);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        position: relative;
+    }
+
+    /* 3. THE VISUAL GRADIENT (Independent Layer) */
+    /* We detach the gradient from the HTML/Body entirely */
+    body::before {
+        content: '';
+        position: fixed; /* Locks to the physical screen glass */
+        top: 0;
+        left: 0;
+        width: 100vw; /* Force full viewport width */
+        height: 100vh; /* Force full viewport height */
+        
+        background: var(--bg); /* The pretty colors */
+        z-index: -1;
+        
+        /* Performance fix for mobile flickering */
+        will-change: transform;
+    }
  .hero {
         min-height: 100dvh;
         display: flex;
@@ -183,6 +190,7 @@ body::before {
 </body>
 
 </html>
+
 
 
 
