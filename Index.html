@@ -20,11 +20,16 @@
     }
 
     html, body {
-        height: 100%;
+        min-height: 100%; 
+        
         background: var(--bg);
+        
+        /* Keeps the gradient fixed so it doesn't restart or cut off when scrolling */
+        background-attachment: fixed; 
+        
         color: var(--text);
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        overflow-x: hidden; 
+        overflow-x: hidden;  
     }
     
     .hero {
@@ -151,4 +156,5 @@
         window.addEventListener('load', createParticles);
     </script>
 </body>
+
 </html>
