@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- ADDED viewport-fit=cover: This forces the HTML to go UNDER the notch and status bar -->
+    <!-- viewport-fit=cover is essential for filling the notch area -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MatterSphere</title>
 <style>
@@ -17,61 +17,61 @@
     * {
         margin: 0;
         padding: 0;
+        box-sizing: border-box; /* Adds better sizing consistency */
     }
 
-    /* --- THE FIX IS HERE --- */
-    
-    /* 1. TARGET THE ROOT (Grandparent) */
+    /* --- FIX FOR BACKGROUND & OVERSCROLL --- */
     html {
-        /* This kills the white. We paint the base canvas green. 
-           If the gradient slips or the phone bounces, it shows Green, not White. */
-        background-color: #228B22; 
+        /* Matches the top color of your gradient so pulling down doesn't show white */
+        background-color: #87CEEB; 
         
-        /* This ensures the HTML tag is AT LEAST as tall as the screen, 
-           but grows if content is longer. */
-        min-height: 100%;
+        /* Disables the "rubber band" bounce on mobile, preventing the white gap entirely */
+        overscroll-behavior: none; 
         
-        /* Fixes the "slidebar inside colors" issue by making HTML the master container */
+        height: 100%;
         width: 100%;
-        overflow-x: hidden;
+        -webkit-tap-highlight-color: transparent;
     }
 
-    /* 2. TARGET THE BODY (Parent) */
     body {
-        min-height: 100vh; /* Use VH here to force full screen height */
+        min-height: 100dvh; /* Uses dynamic viewport height to fix mobile address bar jumps */
         width: 100%;
-        background: transparent; /* Let the fixed gradient show through */
-        
         color: var(--text);
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         position: relative;
+        /* Ensures body takes full width but doesn't overflow horizontally */
+        overflow-x: hidden; 
     }
 
-    /* 3. THE VISUAL GRADIENT (Independent Layer) */
-    /* We detach the gradient from the HTML/Body entirely */
+    /* --- THE GRADIENT LAYER --- */
     body::before {
         content: '';
-        position: fixed; /* Locks to the physical screen glass */
-        top: 0;
-        left: 0;
-        width: 100vw; /* Force full viewport width */
-        height: 100vh; /* Force full viewport height */
-        
-        background: var(--bg); /* The pretty colors */
+        position: fixed;
+        /* inset: 0 forces the background to the absolute edges of the physical screen */
+        inset: 0; 
+        background: var(--bg);
         z-index: -1;
-        
-        /* Performance fix for mobile flickering */
+        /* Hardware acceleration to stop flickering */
+        transform: translateZ(0);
         will-change: transform;
     }
- .hero {
-        min-height: 100dvh;
+
+    .hero {
+        /* min-height needs to account for mobile UI bars */
+        min-height: 100dvh; 
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         text-align: center;
-        padding: 2rem 1rem;
         position: relative;
+        
+        /* --- FIX FOR NOTCH / SAFE AREAS --- */
+        /* This ensures text doesn't get hidden under the iPhone notch/island */
+        padding-top: max(2rem, env(safe-area-inset-top));
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+        padding-bottom: max(2rem, env(safe-area-inset-bottom));
     }
 
     h1 {
@@ -80,22 +80,32 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        text-fill-color: transparent;
+        /* Fallback for older browsers if text-fill-color fails */
+        color: var(--text); 
     }
+
     .subtitle{font-size:clamp(1.2rem,4vw,1.5rem);margin-bottom:1rem;opacity:0;animation:fadeInUp 1s ease-out .5s forwards;}
-    .description{font-size:clamp(1rem,3.5vw,1.1rem);line-height:1.6;margin-bottom:2rem;opacity:0;animation:fadeInUp 1s ease-out .8s forwards;}
-    .start-section{opacity:0;animation:fadeInUp 1s ease-out 1s forwards;}
+    .description{font-size:clamp(1rem,3.5vw,1.1rem);line-height:1.6;margin-bottom:2rem;opacity:0;animation:fadeInUp 1s ease-out .8s forwards; max-width: 800px;}
+    
+    .start-section{opacity:0;animation:fadeInUp 1s ease-out 1s forwards; z-index: 10;}
+    
     .start-btn{background:linear-gradient(135deg,var(--panel),var(--accent));color:var(--text);border:none;padding:1rem 2rem;font-size:clamp(1.1rem,4vw,1.4rem);font-weight:bold;border-radius:50px;cursor:pointer;transition:all .3s ease;box-shadow:0 8px 20px var(--shadow);position:relative;overflow:hidden;min-height:44px;min-width:44px;}
     .start-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:left .5s;}
     .start-btn:hover::before, .start-btn:active::before{left:100%;}
     .start-btn:hover, .start-btn:active{transform:translateY(-3px) scale(1.05);box-shadow:0 12px 25px var(--shadow);}
+    
     .hero::before{
-	content:'';
-	position:absolute;
-	inset:0;
-	background:radial-gradient(circle at 20% 80%,rgba(50,205,50,.1)0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(135,206,235,.1)0%,transparent 50%);animation:shimmer 6s ease-in-out infinite; pointer-events: none;}
-    .particles{position:absolute;inset:0;pointer-events:none;z-index:0;}
+        content:'';
+        position:absolute;
+        inset:0;
+        background:radial-gradient(circle at 20% 80%,rgba(50,205,50,.1)0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(135,206,235,.1)0%,transparent 50%);
+        animation:shimmer 6s ease-in-out infinite; 
+        pointer-events: none;
+    }
+    
+    .particles{position:fixed;inset:0;pointer-events:none;z-index:0;}
     .particle{position:absolute;width:4px;height:4px;background:var(--accent);border-radius:50%;animation:float 4s ease-in-out infinite;}
+    
     #loading{position:fixed;inset:0;background:var(--bg);display:flex;justify-content:center;align-items:center;flex-direction:column;z-index:1000;}
     #loading.hidden{display:none;}
     .loading-content{display:flex;flex-direction:column;align-items:center;gap:1.5rem;}
@@ -107,25 +117,14 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes float { 0% { transform: translateY(100vh) scale(0); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateY(-100px) scale(1); opacity: 0; } }
     
-    @media (max-width: 768px) { .hero { padding: 2rem 1.5rem; } }
-    @media (max-width: 480px) {
-        .hero { padding: 1.5rem 1rem; }
-        .title-group { gap: .8rem; margin-bottom: 1rem; }
-        .description { margin-bottom: 1.5rem; }
-    }
     @media (orientation: landscape) and (max-height: 500px) {
-        .hero { padding: 1rem; }
+        /* Adjusted padding for landscape mode to fit content */
+        .hero { padding-top: 1rem; padding-bottom: 1rem; }
         .title-group { margin-bottom: 0.5rem; }
         .subtitle { margin-bottom: 0.5rem; }
-        .description { margin-bottom: 1rem; }
+        .description { margin-bottom: 1rem; display: none; /* Hide description on very short screens to save space */ }
         h1 { font-size: 2.2rem; }
-        .subtitle, .description, .start-btn { font-size: 1rem; }
-    }
-
-    @media (min-height: 650px) {
-        html, body {
-            overflow: hidden;
-        }
+        .subtitle, .start-btn { font-size: 1rem; }
     }
 
 </style>
@@ -187,12 +186,4 @@
         window.addEventListener('load', createParticles);
     </script>
 </body>
-
 </html>
-
-
-
-
-
-
-
